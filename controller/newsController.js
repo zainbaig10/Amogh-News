@@ -15,7 +15,19 @@ export const addNews = asyncHandler(async (req, res) => {
       media,
     } = req.body;
 
-    const newsDoc = await News.create()
+    const newsDoc = await News.create({
+      title,
+      description,
+      image,
+      content,
+      category,
+      author,
+      views,
+      latestNews, 
+      media,})
+
+      return res.status(200).json({success:true,newsDoc});
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error });
