@@ -14,25 +14,26 @@ const locationSchema = mongoose.Schema({
 const userSchema = mongoose.Schema({
   email: {
     type: String,
-    required: true, 
-    unique: true
+    required: true,
+    unique: true,
   },
   userName: {
     type: String,
-    required: true, 
-    unique: true
+    required: true,
+    unique: true,
   },
   password: reqString,
-  
+
   phone: { type: Number, unique: true },
   location: locationSchema,
   role: {
     type: String,
     enum: ["ADMIN", "USER"],
+    default:"USER",
   },
   dateCreated: { type: Date, default: Date.now },
   dateModified: { type: Date, default: Date.now },
-})
+});
 
 userSchema.pre("save", async function (next) {
   this.dateModified = new Date();
