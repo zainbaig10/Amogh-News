@@ -1,8 +1,14 @@
 import express from "express";
-import { addNews } from "../controller/newsController.js";
+import {
+  addNews,
+  getAllNews,
+  getAllNewsWithPagination,
+} from "../controller/newsController.js";
 
 const newsRouter = express.Router();
 
 newsRouter.route("/addNews").post(addNews);
+newsRouter.route("/getAllNews").get(getAllNews);
+newsRouter.route("/getAllNewsWithPagination").get(getAllNewsWithPagination);
 
 export default newsRouter;
