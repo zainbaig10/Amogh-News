@@ -7,10 +7,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 import https from "https";
 
-//Firebase dependencies
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import admin from "firebase-admin";
-import serviceAccount from "./config/boboFirebaseConf.json" assert { type: "json" };
 
 dotenv.config();
 
@@ -30,11 +26,6 @@ app.use(
     credentials: true,
   })
 );
-
-initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  projectId: "bobo-3576d",
-});
 
 app.get("/health", (req, res) => {
   return res.status(200).json({
