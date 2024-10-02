@@ -11,7 +11,7 @@ const newsSchema = mongoose.Schema({
   title: reqString,
   description: reqString,
   image: { type: String },
-  content: reqString,
+  content: { type: String },
   category: {
     type: String,
     enum: [
@@ -30,6 +30,7 @@ const newsSchema = mongoose.Schema({
   author: reqString,
   mediaType: { type: String},
   mediaUrl: { type: String },
+  dateCreated:{type:Date, default:Date.now}
 });
 
 const News = mongoose.model("news",newsSchema);
