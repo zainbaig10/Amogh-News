@@ -91,3 +91,42 @@ export const getAllNewsWithPagination = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: error.message, success: false });
   }
 });
+
+export const getNewsById = asyncHandler(async(req,res)=>{
+  try{
+    const id = req.params.id;
+
+    const newsDoc = await News.findById(id);
+    if(!newsDoc){
+      console.log("Invalid news Id");
+      return res.status(404).json({success:false,msg:"Invalid news Id"});
+    }
+
+    console.log(newsDoc);
+    return res.status(200).json({success:true,newsDoc});
+
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
+
+export const getNewsByCategory = asyncHandler(async(req,res)=>{
+  try{
+    const category = req.params.category;
+
+    const newsDoc = await News.find({category:category});
+    if(newsDoc.length === 0){
+      console.log("No news right now on this category ",category);
+      return res.status(404).json({success:false,msg:"No news right now on this category ",category});
+    }
+
+    console.log(newsDoc);
+    return res.status(200).json({success:true,newsDoc});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
