@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 
 export const createUser = asyncHandler(async (req, res) => {
     try {
-        const { email, username, password, phone, location, role } = req.body;
+        const { email, userName, password, phone, location, role } = req.body;
         const userDoc = await User.findOne({ $or: [{ email }, { phone }] });
         console.log(userDoc);
         if (userDoc) {
@@ -13,7 +13,7 @@ export const createUser = asyncHandler(async (req, res) => {
         }
         const user = await User.create({
             email,
-            username,
+            userName,
             password,
             phone,
             location,
@@ -58,38 +58,40 @@ export const login = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
     try {
-      const { userId, email, username, location, phone } = req.body;
-  
-      const userDoc = await User.findById(userId);
-      if (!userDoc) {
-        return res
-          .status(404)
-          .json({ success: false, msg: `Admin with ID ${userId} not found` });
-      }
-  
-      const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
-      if (existingUser && existingUser._id.toString() !== userId) {
-        return res
-          .status(409)
-          .json({ success: false, msg: "Email or phone already in use" });
-      }
-  
-      if (email) userDoc.email = email;
-      if (username) userDoc.username = username;
-      if (phone) userDoc.phone = phone;
-  
-      await userDoc.save();
-  
-      return res.status(200).json({
-        success: true,
-        msg: "Admin updated successfully",
-        user: userDoc,
-      });
+
+        const { userId, email, username, location, phone } = req.body;
+
+        const userDoc = await User.findById(userId);
+        if (!userDoc) {
+            return res
+                .status(404)
+                .json({ success: false, msg: `User with ID ${userId} not found` });
+        }
+
+        const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+        if (existingUser && existingUser._id.toString() !== userId) {
+            return res
+                .status(409)
+                .json({ success: false, msg: "Email or phone already in use" });
+        }
+
+        if (email) userDoc.email = email;
+        if (username) userDoc.username = username;
+        if (phone) userDoc.phone = phone;
+        if (location) userDoc.location = location;
+
+        await userDoc.save();
+
+        return res.status(200).json({
+            success: true,
+            msg: "User updated successfully",
+            user: userDoc,
+        });
     } catch (error) {
-      console.log(error);
-      return res.status(500).json({ success: false, error: error.message });
+        console.log(error);
+        return res.status(500).json({ success: false, error: error.message });
     }
-  });
+});
 
 export const getByUserId = asyncHandler(async (req, res) => {
     try {
@@ -102,14 +104,14 @@ export const getByUserId = asyncHandler(async (req, res) => {
         }
         return res
             .status(200)
-            .json({ userDoc, success: true, msg: `userId found ${userId}` });
+            .json({ userDoc, success: true, msg: `userId found` });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error, success: false });
     }
 });
 
-export const getAllWithPaginationAndSorting = asyncHandler(async (req, res) => {
+export const getAllWithPagination = asyncHandler(async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = parseInt(req.query.pageSize) || 10;
