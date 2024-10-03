@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const reqString = {
   type: String,
   required: true,
 };
-
-
 
 const newsSchema = mongoose.Schema({
   title: reqString,
