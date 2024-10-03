@@ -1,6 +1,6 @@
 import express from "express";
 import {
-    changePassword,
+  changePassword,
   createUser,
   getAllWithPagination,
   getByUserId,

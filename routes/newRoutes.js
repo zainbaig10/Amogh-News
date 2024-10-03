@@ -10,6 +10,7 @@ import {
   getNewsByMediaType,
   updateBreakingNewsStatus,
   updateBreakingNewsTrue,
+  updateNews,
 } from "../controller/newsController.js";
 
 const newsRouter = express.Router();
@@ -24,5 +25,6 @@ newsRouter.route("/getNewsByMediaType/:mediaType").get(getNewsByMediaType);
 newsRouter.route("/updateBreakingNewsStatus").put(updateBreakingNewsStatus);
 newsRouter.route("/updateBreakingNews/:id").put(updateBreakingNewsTrue);
 newsRouter.route("/getBreakingNews").get(getBreakingNews);
+newsRouter.route("/updateNews/:id").post(updateNews);
 
 export default newsRouter;

@@ -26,15 +26,59 @@ export const addNews = asyncHandler(async (req, res) => {
       mediaType,
       mediaUrl,
       breakingNews,
-    })
+    });
 
-    if(!newsDoc){
+    if (!newsDoc) {
       console.log("Error adding news");
-      return res.status(404).json({success:false,msg:"Error adding news"})
+      return res.status(404).json({ success: false, msg: "Error adding news" });
     }
     console.log(newsDoc);
-    return res.status(200).json({success:true,newsDoc});
+    return res.status(200).json({ success: true, newsDoc });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error });
+  }
+});
 
+export const updateNews = asyncHandler(async (req, res) => {
+  try {
+    const id = req.params.id;
+    const {
+      title,
+      description,
+      image,
+      content,
+      category,
+      author,
+      mediaType,
+      mediaUrl,
+      breakingNews,
+    } = req.body;
+
+    const newsDoc = await News.findOneAndUpdate(
+      { _id: id },
+      {
+        title,
+        description,
+        image,
+        content,
+        category,
+        author,
+        mediaType,
+        mediaUrl,
+        breakingNews,
+      }
+    );
+    newsDoc.save();
+    if (!newsDoc) {
+      console.log("Invalid news id");
+      return res.status(404).json({ success: false, msg: "Invalid news id" });
+    }
+
+    console.log("News details updated successfully");
+    return res
+      .status(200)
+      .json({ success: true, msg: "News details updated successfully" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error });
@@ -43,11 +87,13 @@ export const addNews = asyncHandler(async (req, res) => {
 
 export const getAllNews = asyncHandler(async (req, res) => {
   try {
-    const news = await News.find({}).exec(); 
+    const news = await News.find({}).exec();
     return res.status(200).json({ news, success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Failed to fetch news", success: false });
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch news", success: false });
   }
 });
 
@@ -91,106 +137,114 @@ export const getAllNewsWithPagination = asyncHandler(async (req, res) => {
   }
 });
 
-export const getNewsById = asyncHandler(async(req,res)=>{
-  try{
+export const getNewsById = asyncHandler(async (req, res) => {
+  try {
     const id = req.params.id;
 
     const newsDoc = await News.findById(id);
-    if(!newsDoc){
+    if (!newsDoc) {
       console.log("Invalid news Id");
-      return res.status(404).json({success:false,msg:"Invalid news Id"});
+      return res.status(404).json({ success: false, msg: "Invalid news Id" });
     }
 
     console.log(newsDoc);
-    return res.status(200).json({success:true,newsDoc});
-
-  }
-  catch(error){
+    return res.status(200).json({ success: true, newsDoc });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
 
-export const getNewsByCategory = asyncHandler(async(req,res)=>{
-  try{
+export const getNewsByCategory = asyncHandler(async (req, res) => {
+  try {
     const category = req.params.category;
 
-    const newsDoc = await News.find({category:category});
-    if(newsDoc.length === 0){
-      console.log("No news right now on this category ",category);
-      return res.status(404).json({success:false,msg:"No news right now on this category ",category});
+    const newsDoc = await News.find({ category: category });
+    if (newsDoc.length === 0) {
+      console.log("No news right now on this category ", category);
+      return res
+        .status(404)
+        .json({
+          success: false,
+          msg: "No news right now on this category ",
+          category,
+        });
     }
 
     console.log(newsDoc);
-    return res.status(200).json({success:true,newsDoc});
-  }
-  catch(error){
+    return res.status(200).json({ success: true, newsDoc });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
 
-export const deleteNewsById = asyncHandler(async(req,res)=>{
-  try{
+export const deleteNewsById = asyncHandler(async (req, res) => {
+  try {
     const id = req.params.id;
 
     const newsDoc = await News.findByIdAndDelete(id);
-    if(!newsDoc){
+    if (!newsDoc) {
       console.log("Invalid news id");
-      return res.status(404).json({success:false,msg:"Invalid news id"});
+      return res.status(404).json({ success: false, msg: "Invalid news id" });
     }
 
-    return res.status(200).json({success:true,msg:"News deleted successfully",newsDoc});
-  }
-  catch(error){
+    return res
+      .status(200)
+      .json({ success: true, msg: "News deleted successfully", newsDoc });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
 
-export const getNewsByMediaType = asyncHandler(async(req,res)=>{
-  try{
+export const getNewsByMediaType = asyncHandler(async (req, res) => {
+  try {
     const mediaType = req.params.mediaType;
 
-    const newsDoc = await News.find({mediaType:mediaType});
-    if(newsDoc.length === 0){
+    const newsDoc = await News.find({ mediaType: mediaType });
+    if (newsDoc.length === 0) {
       console.log("No news in this media type for now");
-      return res.status(404).json({success:false,msg:"No news in this media type for now"});
+      return res
+        .status(404)
+        .json({ success: false, msg: "No news in this media type for now" });
     }
 
     console.log(newsDoc);
-    return res.status(200).json({success:true,newsDoc});
-
-  }
-  catch(error){
+    return res.status(200).json({ success: true, newsDoc });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
 
-export const updateBreakingNewsTrue = asyncHandler(async(req,res)=>{
-  try{
+export const updateBreakingNewsTrue = asyncHandler(async (req, res) => {
+  try {
     const id = req.params.id;
 
-    const newsDoc = await News.findOneAndUpdate({_id:id},{
-      breakingNews:true,
-    });
-    if(!newsDoc){
+    const newsDoc = await News.findOneAndUpdate(
+      { _id: id },
+      {
+        breakingNews: true,
+      }
+    );
+    if (!newsDoc) {
       console.log("Not found");
-      return res.status(404).json({success:false,msg:"Not found"});
+      return res.status(404).json({ success: false, msg: "Not found" });
     }
 
     console.log("news updated to breaking news");
-    return res.status(200).json({success:true,msg:"news updated to breaking news"})
-  }
-  catch(error){
+    return res
+      .status(200)
+      .json({ success: true, msg: "news updated to breaking news" });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
 
-export const updateBreakingNewsStatus = asyncHandler(async (req,res) => {
-  const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000);  // 24 hours ago
+export const updateBreakingNewsStatus = asyncHandler(async (req, res) => {
+  const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
 
   try {
     const result = await News.updateMany(
@@ -198,28 +252,37 @@ export const updateBreakingNewsStatus = asyncHandler(async (req,res) => {
       { $set: { breakingNews: false } }
     );
     console.log(`Updated news items to no longer be breaking.`);
-    return res.status(200).json({success:true,msg:"Updated news items to no longer be breaking.",result})
+    return res
+      .status(200)
+      .json({
+        success: true,
+        msg: "Updated news items to no longer be breaking.",
+        result,
+      });
   } catch (error) {
-    console.error('Error updating breaking news:', error);
-    return res.status(500).json({success:false,msg:'Error updating breaking news:', error})
+    console.error("Error updating breaking news:", error);
+    return res
+      .status(500)
+      .json({ success: false, msg: "Error updating breaking news:", error });
   }
 });
 
-export const getBreakingNews = asyncHandler(async(req,res)=>{
-  try{
+export const getBreakingNews = asyncHandler(async (req, res) => {
+  try {
     //const brekingNews;
 
-    const newsDoc = await News.find({breakingNews:true});
-    if(newsDoc.length === 0){
+    const newsDoc = await News.find({ breakingNews: true });
+    if (newsDoc.length === 0) {
       console.log("No breaking news available");
-      return res.status(404).json({success:false,msg:"No breaking news available"})
+      return res
+        .status(404)
+        .json({ success: false, msg: "No breaking news available" });
     }
 
     console.log(newsDoc);
-    return res.status(200).json({success:true,newsDoc});
-  }
-  catch(error){
+    return res.status(200).json({ success: true, newsDoc });
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({success:false,error});
+    return res.status(500).json({ success: false, error });
   }
-})
+});
