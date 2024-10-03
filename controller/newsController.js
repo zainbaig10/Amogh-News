@@ -1,4 +1,4 @@
-import News from "../schemas/newSchema.js";
+import News from "../schemas/newsSchema.js";
 import cron from "node-cron";
 import asyncHandler from "express-async-handler";
 
@@ -162,13 +162,11 @@ export const getNewsByCategory = asyncHandler(async (req, res) => {
     const newsDoc = await News.find({ category: category });
     if (newsDoc.length === 0) {
       console.log("No news right now on this category ", category);
-      return res
-        .status(404)
-        .json({
-          success: false,
-          msg: "No news right now on this category ",
-          category,
-        });
+      return res.status(404).json({
+        success: false,
+        msg: "No news right now on this category ",
+        category,
+      });
     }
 
     console.log(newsDoc);
@@ -215,55 +213,6 @@ export const getNewsByMediaType = asyncHandler(async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error });
-  }
-});
-
-export const updateBreakingNewsTrue = asyncHandler(async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const newsDoc = await News.findOneAndUpdate(
-      { _id: id },
-      {
-        breakingNews: true,
-      }
-    );
-    if (!newsDoc) {
-      console.log("Not found");
-      return res.status(404).json({ success: false, msg: "Not found" });
-    }
-
-    console.log("news updated to breaking news");
-    return res
-      .status(200)
-      .json({ success: true, msg: "news updated to breaking news" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ success: false, error });
-  }
-});
-
-export const updateBreakingNewsStatus = asyncHandler(async (req, res) => {
-  const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
-
-  try {
-    const result = await News.updateMany(
-      { breakingNews: true, dateCreated: { $lt: cutoffDate } },
-      { $set: { breakingNews: false } }
-    );
-    console.log(`Updated news items to no longer be breaking.`);
-    return res
-      .status(200)
-      .json({
-        success: true,
-        msg: "Updated news items to no longer be breaking.",
-        result,
-      });
-  } catch (error) {
-    console.error("Error updating breaking news:", error);
-    return res
-      .status(500)
-      .json({ success: false, msg: "Error updating breaking news:", error });
   }
 });
 

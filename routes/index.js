@@ -1,5 +1,5 @@
 import expressRouter from "express";
-import newsRouter from "./newRoutes.js";
+import newsRouter from "./newsRoutes.js";
 import userRouter from "./userRoutes.js";
 
 const router = expressRouter();

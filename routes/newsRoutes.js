@@ -8,8 +8,6 @@ import {
   getNewsByCategory,
   getNewsById,
   getNewsByMediaType,
-  updateBreakingNewsStatus,
-  updateBreakingNewsTrue,
   updateNews,
 } from "../controller/newsController.js";
 
@@ -22,8 +20,6 @@ newsRouter.route("/getNewsById/:id").get(getNewsById);
 newsRouter.route("/getNewsByCategory/:category").get(getNewsByCategory);
 newsRouter.route("/deleteNewsById/:id").delete(deleteNewsById);
 newsRouter.route("/getNewsByMediaType/:mediaType").get(getNewsByMediaType);
-newsRouter.route("/updateBreakingNewsStatus").put(updateBreakingNewsStatus);
-newsRouter.route("/updateBreakingNews/:id").put(updateBreakingNewsTrue);
 newsRouter.route("/getBreakingNews").get(getBreakingNews);
 newsRouter.route("/updateNews/:id").post(updateNews);
 
