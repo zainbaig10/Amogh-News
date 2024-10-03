@@ -1,4 +1,5 @@
 import News from "../schemas/newSchema.js";
+import cron from "node-cron";
 import asyncHandler from "express-async-handler";
 
 export const addNews = asyncHandler(async (req, res) => {
@@ -10,10 +11,9 @@ export const addNews = asyncHandler(async (req, res) => {
       content,
       category,
       author,
-      views,
-      latestNews,
       mediaType,
       mediaUrl,
+      breakingNews,
     } = req.body;
 
     const newsDoc = await News.create({
@@ -23,10 +23,9 @@ export const addNews = asyncHandler(async (req, res) => {
       content,
       category,
       author,
-      views,
-      latestNews, 
       mediaType,
-      mediaUrl
+      mediaUrl,
+      breakingNews,
     })
 
     if(!newsDoc){
@@ -120,6 +119,100 @@ export const getNewsByCategory = asyncHandler(async(req,res)=>{
     if(newsDoc.length === 0){
       console.log("No news right now on this category ",category);
       return res.status(404).json({success:false,msg:"No news right now on this category ",category});
+    }
+
+    console.log(newsDoc);
+    return res.status(200).json({success:true,newsDoc});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
+
+export const deleteNewsById = asyncHandler(async(req,res)=>{
+  try{
+    const id = req.params.id;
+
+    const newsDoc = await News.findByIdAndDelete(id);
+    if(!newsDoc){
+      console.log("Invalid news id");
+      return res.status(404).json({success:false,msg:"Invalid news id"});
+    }
+
+    return res.status(200).json({success:true,msg:"News deleted successfully",newsDoc});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
+
+export const getNewsByMediaType = asyncHandler(async(req,res)=>{
+  try{
+    const mediaType = req.params.mediaType;
+
+    const newsDoc = await News.find({mediaType:mediaType});
+    if(newsDoc.length === 0){
+      console.log("No news in this media type for now");
+      return res.status(404).json({success:false,msg:"No news in this media type for now"});
+    }
+
+    console.log(newsDoc);
+    return res.status(200).json({success:true,newsDoc});
+
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
+
+export const updateBreakingNewsTrue = asyncHandler(async(req,res)=>{
+  try{
+    const id = req.params.id;
+
+    const newsDoc = await News.findOneAndUpdate({_id:id},{
+      breakingNews:true,
+    });
+    if(!newsDoc){
+      console.log("Not found");
+      return res.status(404).json({success:false,msg:"Not found"});
+    }
+
+    console.log("news updated to breaking news");
+    return res.status(200).json({success:true,msg:"news updated to breaking news"})
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({success:false,error});
+  }
+})
+
+export const updateBreakingNewsStatus = asyncHandler(async (req,res) => {
+  const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000);  // 24 hours ago
+
+  try {
+    const result = await News.updateMany(
+      { breakingNews: true, dateCreated: { $lt: cutoffDate } },
+      { $set: { breakingNews: false } }
+    );
+    console.log(`Updated news items to no longer be breaking.`);
+    return res.status(200).json({success:true,msg:"Updated news items to no longer be breaking.",result})
+  } catch (error) {
+    console.error('Error updating breaking news:', error);
+    return res.status(500).json({success:false,msg:'Error updating breaking news:', error})
+  }
+});
+
+export const getBreakingNews = asyncHandler(async(req,res)=>{
+  try{
+    //const brekingNews;
+
+    const newsDoc = await News.find({breakingNews:true});
+    if(newsDoc.length === 0){
+      console.log("No breaking news available");
+      return res.status(404).json({success:false,msg:"No breaking news available"})
     }
 
     console.log(newsDoc);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const reqString = {
   type: String,
@@ -25,11 +26,13 @@ const newsSchema = mongoose.Schema({
       "CINEMA",
       "INTERNATIONAL",
       "COMEDY",
+      "STOCK MARKET",
     ],
   },
   author: reqString,
   mediaType: { type: String},
   mediaUrl: { type: String },
+  breakingNews: {type:Boolean,default:false},
   dateCreated:{type:Date, default:Date.now}
 });
 
