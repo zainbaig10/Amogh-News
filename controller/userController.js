@@ -1,5 +1,6 @@
 import User from "../schemas/userSchema.js";
 import asyncHandler from "express-async-handler";
+
 export const createUser = asyncHandler(async (req, res) => {
     try {
         const { email, userName, password, phone, location, role } = req.body;
@@ -28,6 +29,7 @@ export const createUser = asyncHandler(async (req, res) => {
         return res.status(500).json({ error, success: false });
     }
 });
+
 export const login = asyncHandler(async (req, res) => {
     try {
         const { phone, password } = req.body;
@@ -50,9 +52,10 @@ export const login = asyncHandler(async (req, res) => {
         return res.status(500).json({ error: error.message, success: false });
     }
 });
+
 export const updateUser = asyncHandler(async (req, res) => {
     try {
-        const { userId, email, username, location, phone } = req.body;
+        const { userId, email, userName, location, phone } = req.body;
         const userDoc = await User.findById(userId);
         if (!userDoc) {
             return res
@@ -66,7 +69,7 @@ export const updateUser = asyncHandler(async (req, res) => {
                 .json({ success: false, msg: "Email or phone already in use" });
         }
         if (email) userDoc.email = email;
-        if (username) userDoc.username = username;
+        if (userName) userDoc.userName = userName;
         if (phone) userDoc.phone = phone;
         if (location) userDoc.location = location;
         await userDoc.save();
@@ -80,6 +83,7 @@ export const updateUser = asyncHandler(async (req, res) => {
         return res.status(500).json({ success: false, error: error.message });
     }
 });
+
 export const getByUserId = asyncHandler(async (req, res) => {
     try {
         const userId = req.params.id;
@@ -97,6 +101,7 @@ export const getByUserId = asyncHandler(async (req, res) => {
         return res.status(500).json({ error, success: false });
     }
 });
+
 export const getAllWithPagination = asyncHandler(async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -130,3 +135,45 @@ export const getAllWithPagination = asyncHandler(async (req, res) => {
         return res.status(500).json({ error, success: false });
     }
 });
+
+export const getUserByRole = asyncHandler(async (req, res) => {
+    try {
+        const { role } = req.params;
+
+        if (role !== 'ADMIN' && role !== 'USER') {
+            return res.status(400).json({ message: 'Invalid role specified' });
+        }
+
+        const userDoc = await User.find({ role });
+
+        if (!userDoc || userDoc.length === 0) {
+            return res.status(404).json({ message: 'No users found with this role' });
+        }
+
+        return res.status(200).json({ success: true, userDoc })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error, success: false });
+    }
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+    try {
+      const { userId, password } = req.body;
+      const userDoc = await User.findById(userId);
+      if (!userDoc) {
+        return res
+          .status(404)
+          .json({ success: false, msg: `User Id Not Found ${userId}` });
+      }
+      userDoc.password = password;
+      await userDoc.save();
+      return res
+        .status(200)
+        .json({ success: true, msg: "Password Updated Successfully" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message, success: false });
+    }
+  });
