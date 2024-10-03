@@ -99,26 +99,26 @@ export const getAllNews = asyncHandler(async (req, res) => {
 
 export const getAllNewsWithPagination = asyncHandler(async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Default page is 1
-    const pageSize = parseInt(req.query.pageSize) || 10; // Default pageSize is 10
-    const sortField = req.query.sortField || "dateCreated"; // Default sort field
-    const sortOrder = req.query.sortOrder || "desc"; // Default sort order
+    const page = parseInt(req.query.page) || 1; 
+    const pageSize = parseInt(req.query.pageSize) || 10; 
+    const sortField = req.query.sortField || "dateCreated"; 
+    const sortOrder = req.query.sortOrder || "desc"; 
     const sort = {};
-    sort[sortField] = sortOrder === "asc" ? 1 : -1; // Ascending or Descending
+    sort[sortField] = sortOrder === "asc" ? 1 : -1;
     const startIndex = (page - 1) * pageSize;
 
-    // Get total count of news documents
+  
     const totalDocuments = await News.countDocuments();
     const totalPages = Math.ceil(totalDocuments / pageSize);
 
-    // Fetch paginated news articles
+
     const news = await News.find({})
       .sort(sort)
       .skip(startIndex)
       .limit(pageSize)
       .exec();
 
-    // Response
+ 
     return res.status(200).json({
       news,
       pagination: {
