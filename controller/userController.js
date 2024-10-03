@@ -55,7 +55,7 @@ export const login = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
     try {
-        const { userId, email, username, location, phone } = req.body;
+        const { userId, email, userName, location, phone } = req.body;
         const userDoc = await User.findById(userId);
         if (!userDoc) {
             return res
@@ -69,7 +69,7 @@ export const updateUser = asyncHandler(async (req, res) => {
                 .json({ success: false, msg: "Email or phone already in use" });
         }
         if (email) userDoc.email = email;
-        if (username) userDoc.username = username;
+        if (userName) userDoc.userName = userName;
         if (phone) userDoc.phone = phone;
         if (location) userDoc.location = location;
         await userDoc.save();
