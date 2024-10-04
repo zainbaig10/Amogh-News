@@ -22,5 +22,6 @@ newsRouter.route("/deleteNewsById/:id").delete(deleteNewsById);
 newsRouter.route("/getNewsByMediaType/:mediaType").get(getNewsByMediaType);
 newsRouter.route("/getBreakingNews").get(getBreakingNews);
 newsRouter.route("/updateNews/:id").post(updateNews);
+newsRouter.route("/updateBreakingNewsStatus").put(updateBreakingNewsStatus);
 
 export default newsRouter;

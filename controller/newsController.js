@@ -235,3 +235,18 @@ export const getBreakingNews = asyncHandler(async (req, res) => {
     return res.status(500).json({ success: false, error });
   }
 });
+
+export const updateBreakingNewsStatus = asyncHandler(async (req,res) => {
+  const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000);  // 24 hours ago
+  try {
+    const result = await News.updateMany(
+      { breakingNews: true, dateCreated: { $lt: cutoffDate } },
+      { $set: { breakingNews: false } }
+    );
+    console.log(`Updated news items to no longer be breaking.`);
+    return res.status(200).json({success:true,msg:"Updated news items to no longer be breaking.",result})
+  } catch (error) {
+    console.error('Error updating breaking news:', error);
+    return res.status(500).json({success:false,msg:'Error updating breaking news:', error})
+  }
+});
