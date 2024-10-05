@@ -1,6 +1,10 @@
 import News from "../schemas/newsSchema.js";
 import cron from "node-cron";
 import asyncHandler from "express-async-handler";
+import { sendNewsNotification } from "../util/sendNotification.js";
+import User from "../schemas/userSchema.js";
+
+
 
 export const addNews = asyncHandler(async (req, res) => {
   try {
@@ -16,6 +20,7 @@ export const addNews = asyncHandler(async (req, res) => {
       breakingNews,
     } = req.body;
 
+    // Create the news document
     const newsDoc = await News.create({
       title,
       description,
@@ -32,6 +37,15 @@ export const addNews = asyncHandler(async (req, res) => {
       console.log("Error adding news");
       return res.status(404).json({ success: false, msg: "Error adding news" });
     }
+
+    // Assuming you have a function to retrieve FCM tokens of users
+    const usersFCMTokens = await getUsersFCMTokens(); // Implement this function to fetch tokens
+
+    // Send notifications to all users
+    for (const token of usersFCMTokens) {
+      await sendNewsNotification(token, title, description);
+    }
+
     console.log(newsDoc);
     return res.status(200).json({ success: true, newsDoc });
   } catch (error) {
@@ -39,6 +53,19 @@ export const addNews = asyncHandler(async (req, res) => {
     return res.status(500).json({ success: false, error });
   }
 });
+
+// Implement this function to retrieve FCM tokens from your database
+export const getUsersFCMTokens = async () => {
+  try {
+    // Fetch all users with their FCM tokens
+    const users = await User.find({ fcmToken: { $exists: true, $ne: null } }, 'fcmToken');
+    // Return the FCM tokens as an array
+    return users.map(user => user.fcmToken);
+  } catch (error) {
+    console.error("Error fetching FCM tokens:", error);
+    throw new Error("Unable to fetch FCM tokens");
+  }
+};
 
 export const updateNews = asyncHandler(async (req, res) => {
   try {

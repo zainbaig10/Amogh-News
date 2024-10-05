@@ -7,6 +7,12 @@ import fs from "fs";
 import dotenv from "dotenv";
 import https from "https";
 
+//Firebase dependencies
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import admin from "firebase-admin";
+//import serviceAccount from "./config/fir-push-notification-901dd-firebase-adminsdk-byi0j-d2ef435bbc.json" assert { type: "json" };
+const serviceAccount = JSON.parse(fs.readFileSync("./config/fir-push-notification-901dd-firebase-adminsdk-byi0j-d2ef435bbc.json"));
+
 dotenv.config();
 
 const port = process.env.PORT || 4000;
@@ -25,6 +31,11 @@ app.use(
     credentials: true,
   })
 );
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  projectId:"fir-push-notification-901dd",
+});
 
 app.get("/health", (req, res) => {
   return res.status(200).json({

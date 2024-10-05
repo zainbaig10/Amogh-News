@@ -7,6 +7,7 @@ import {
   getUserByRole,
   login,
   updateUser,
+  updateUserWithToken,
 } from "../controller/userController.js";
 
 const userRouter = express.Router();
@@ -18,5 +19,6 @@ userRouter.route("/getByUserId/:id").get(getByUserId);
 userRouter.route("/getAllWithPagination").get(getAllWithPagination);
 userRouter.route("/getUserByRole/:role").get(getUserByRole);
 userRouter.route("/changePassword").post(changePassword);
+userRouter.route("/updateUserWithToken").post(updateUserWithToken);
 
 export default userRouter;

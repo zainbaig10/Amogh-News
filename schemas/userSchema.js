@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema({
     enum: ["ADMIN", "USER"],
     default: "USER",
   },
+  fcmToken: String,
   dateCreated: { type: Date, default: Date.now },
   dateModified: { type: Date, default: Date.now },
 });

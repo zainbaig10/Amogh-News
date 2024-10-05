@@ -8,6 +8,7 @@ import {
   getNewsByCategory,
   getNewsById,
   getNewsByMediaType,
+  updateBreakingNewsStatus,
   updateNews,
 } from "../controller/newsController.js";
 

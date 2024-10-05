@@ -176,3 +176,22 @@ export const changePassword = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: error.message, success: false });
   }
 });
+
+export const updateUserWithToken = asyncHandler(async (req, res) => {
+  try {
+    const { userId, fcmToken } = req.body;
+    const userDoc = await User.findById(userId);
+    if (!userDoc) {
+      return res.status(404).json({ success: false, msg: `User not found` });
+    }
+    
+    // Update or store the FCM token
+    userDoc.fcmToken = fcmToken; // assuming you have an fcmToken field in your user schema
+    await userDoc.save();
+    
+    return res.status(200).json({ success: true, msg: "Token updated successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
