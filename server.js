@@ -12,10 +12,10 @@ import { initializeApp, applicationDefault } from "firebase-admin/app";
 import admin from "firebase-admin";
 //import serviceAccount from "./config/fir-push-notification-901dd-firebase-adminsdk-byi0j-d2ef435bbc.json" assert { type: "json" };
 //const serviceAccount = JSON.parse(fs.readFileSync("./config/fir-push-notification-901dd-firebase-adminsdk-byi0j-d2ef435bbc.json"));
-const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+//const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 dotenv.config();
 
